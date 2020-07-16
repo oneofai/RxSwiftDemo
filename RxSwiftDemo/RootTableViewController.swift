@@ -41,12 +41,7 @@ class RootTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.register(ExampleCell.self, forCellReuseIdentifier: "cell")
-        
-        let animatedDataSource = RxTableViewSectionedAnimatedDataSource<MySection>(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! ExampleCell
-            cell.textLabel?.text = "\(item)"
-            return cell
-        })
+
         
         let dataSource = RxTableViewSectionedReloadDataSource<MySection>(configureCell: { (_, tableView, _, item) -> UITableViewCell in
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! ExampleCell
@@ -54,27 +49,34 @@ class RootTableViewController: UITableViewController {
             return cell
         })
         
-        animatedDataSource.titleForHeaderInSection = {
+        dataSource.titleForHeaderInSection = {
             return $0.sectionModels[$1].header
         }
         
         let sections = [
           MySection(header: "First section", items: [
             1,
-            2
+            2,
+            3,
+            4,
+            5
           ]),
           MySection(header: "Second section", items: [
-            3,
-            4
+            6,
+            7,
+            8,
+            9
           ])
         ]
         
-        Observable.just(sections)
-            .bind(to: tableView.rx.items(dataSource: animatedDataSource))
-            .disposed(by: disposeBag)
+        DispatchQueue.main.async {
+            Observable.just(sections)
+                .bind(to: self.tableView.rx.items(dataSource: dataSource))
+                .disposed(by: self.disposeBag)
+        }
         
     }
-
-
+    
+    
 }
 
