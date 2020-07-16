@@ -75,6 +75,11 @@ class RootTableViewController: UITableViewController {
                 .disposed(by: self.disposeBag)
         }
         
+        tableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                self?.tableView.deselectRow(at: indexPath, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
     
     
